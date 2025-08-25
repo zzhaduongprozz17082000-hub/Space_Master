@@ -32,18 +32,17 @@ const App: React.FC = () => {
         return <div className="loading-spinner"></div>;
     }
 
+    if (user) {
+      return <MySpace user={user} handleLogout={handleLogout} />
+    }
+    
     return (
         <main>
             <header>
                 <h1>Space Master</h1>
-                {!user && <p>Nền tảng lưu trữ đám mây cá nhân của bạn.</p>}
+                <p>Nền tảng lưu trữ đám mây cá nhân của bạn.</p>
             </header>
-            
-            {user ? (
-                <MySpace user={user} handleLogout={handleLogout} />
-            ) : (
-                <Auth />
-            )}
+            <Auth />
         </main>
     );
 };
