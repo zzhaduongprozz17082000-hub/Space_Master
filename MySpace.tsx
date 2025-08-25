@@ -1,24 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import firebase from 'firebase/compat/app';
-import { firestore } from './firebase';
+import { firestore, storage, serverTimestamp } from './firebase';
 
 // Interfaces
 interface Folder {
     id: string;
     name: string;
     parentId: string | null;
+    createdAt: firebase.firestore.Timestamp | null;
 }
 
 interface File {
     id: string;
     name: string;
     parentId: string | null;
+    createdAt: firebase.firestore.Timestamp | null;
 }
 
 interface MySpaceProps {
     user: firebase.User;
     handleLogout: () => void;
 }
+
+// Helper Functions
+const formatDate = (timestamp: firebase.firestore.Timestamp | null): string => {
+    if (!timestamp) return '';
+    return new Date(timestamp.seconds * 1000).toISOString().split('T')[0];
+};
+
 
 // SVG Icons
 const FolderIcon: React.FC<{className?: string}> = ({className}) => (
@@ -43,10 +52,13 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
     const [folders, setFolders] = useState<Folder[]>([]);
     const [files, setFiles] = useState<File[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isUploading, setIsUploading] = useState(false);
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
     const [path, setPath] = useState<{ id: string | null; name: string }[]>([
         { id: null, name: 'My Drive' }
     ]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
 
     useEffect(() => {
         if (!user) {
@@ -58,12 +70,14 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
         const fetchFolders = firestore.collection('folders')
             .where('userId', '==', user.uid)
             .where('parentId', '==', currentFolderId)
+            .orderBy('createdAt', 'desc')
             .onSnapshot(
                 snapshot => {
                     const userFolders = snapshot.docs.map(doc => ({
                         id: doc.id,
                         name: doc.data().name,
                         parentId: doc.data().parentId,
+                        createdAt: doc.data().createdAt || null,
                     }));
                     setFolders(userFolders);
                     setLoading(false);
@@ -77,12 +91,14 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
         const fetchFiles = firestore.collection('files')
             .where('userId', '==', user.uid)
             .where('parentId', '==', currentFolderId)
+            .orderBy('createdAt', 'desc')
             .onSnapshot(
                 snapshot => {
                     const userFiles = snapshot.docs.map(doc => ({
                         id: doc.id,
                         name: doc.data().name,
                         parentId: doc.data().parentId,
+                        createdAt: doc.data().createdAt || null,
                     }));
                     setFiles(userFiles);
                 },
@@ -108,9 +124,75 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
         setPath(prevPath => prevPath.slice(0, index + 1));
     };
 
+    const handleCreateFolder = async () => {
+        const folderName = prompt("Nhập tên thư mục mới:");
+        if (folderName && folderName.trim() !== '') {
+            try {
+                await firestore.collection('folders').add({
+                    name: folderName.trim(),
+                    userId: user.uid,
+                    parentId: currentFolderId,
+                    createdAt: serverTimestamp(),
+                });
+            } catch (error) {
+                console.error("Lỗi khi tạo thư mục:", error);
+                alert("Không thể tạo thư mục. Vui lòng thử lại.");
+            }
+        }
+    };
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = e.target.files;
+        if (!selectedFiles || selectedFiles.length === 0) return;
+
+        setIsUploading(true);
+        const uploadPromises = Array.from(selectedFiles).map((file: File) => {
+            const filePath = `files/${user.uid}/${currentFolderId || 'root'}/${Date.now()}-${file.name}`;
+            const storageRef = storage.ref(filePath);
+            const uploadTask = storageRef.put(file);
+
+            return uploadTask.then(async snapshot => {
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                await firestore.collection('files').add({
+                    name: file.name,
+                    userId: user.uid,
+                    parentId: currentFolderId,
+                    createdAt: serverTimestamp(),
+                    url: downloadURL,
+                    path: filePath,
+                    size: file.size,
+                    type: file.type,
+                });
+            });
+        });
+
+        try {
+            await Promise.all(uploadPromises);
+        } catch (error) {
+            console.error("Lỗi khi tải tệp lên:", error);
+            alert("Đã xảy ra lỗi khi tải tệp lên. Vui lòng thử lại.");
+        } finally {
+            setIsUploading(false);
+            // Reset a file input value
+            if(fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
 
     return (
         <div className="spacemaster-layout">
+            <input 
+                type="file" 
+                multiple 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                style={{ display: 'none' }}
+            />
             <aside className="sidebar">
                 <div className="sidebar-header">Space Master</div>
                 <nav className="sidebar-nav">
@@ -123,8 +205,10 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
                     </ul>
                 </nav>
                 <div className="sidebar-actions">
-                    <button className="button new-folder-btn">New folder</button>
-                    <button className="button">Upload file</button>
+                    <button onClick={handleCreateFolder} className="button new-folder-btn">New folder</button>
+                    <button onClick={handleUploadClick} className="button" disabled={isUploading}>
+                        {isUploading ? 'Uploading...' : 'Upload file'}
+                    </button>
                 </div>
             </aside>
             <main className="main-content">
@@ -137,7 +221,7 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
                         <div className="user-profile">
                             <span>{user.displayName || user.email}</span>
                             <UserIcon />
-                             <button onClick={handleLogout} className="toggle-auth">Đăng xuất</button>
+                             <button onClick={handleLogout} className="logout-btn">Đăng xuất</button>
                         </div>
                     </div>
                 </header>
@@ -185,7 +269,7 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
                                                 </div>
                                                 <div className="item-details">
                                                     <span className="item-name">{folder.name}</span>
-                                                    <span className="item-date">2025-08-25</span>
+                                                    <span className="item-date">{formatDate(folder.createdAt)}</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -199,7 +283,7 @@ const MySpace: React.FC<MySpaceProps> = ({ user, handleLogout }) => {
                                                 </div>
                                                 <div className="item-details">
                                                     <span className="item-name">{file.name}</span>
-                                                     <span className="item-date">2025-08-25</span>
+                                                     <span className="item-date">{formatDate(file.createdAt)}</span>
                                                 </div>
                                             </div>
                                         ))}

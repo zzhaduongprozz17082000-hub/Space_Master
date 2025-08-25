@@ -2,6 +2,7 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import "firebase/compat/storage";
 
 // TODO: Thay thế đối tượng sau bằng cấu hình project Firebase của bạn
 // Bạn có thể lấy thông tin này từ Firebase Console:
@@ -26,3 +27,5 @@ if (!firebase.apps.length) {
 // Khởi tạo và export các dịch vụ Firebase bạn muốn sử dụng
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
+export const storage = firebase.storage();
+export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
