@@ -8,14 +8,15 @@ import "firebase/compat/storage";
 // Bạn có thể lấy thông tin này từ Firebase Console:
 // Project settings > General > Your apps > SDK setup and configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBqVHi4MqllhOXUdLZxmqR_Wqu7pbPtY9g",
-  authDomain: "space-master-701f9.firebaseapp.com",
-  projectId: "space-master-701f9",
-  storageBucket: "space-master-701f9.firebasestorage.app",
-  messagingSenderId: "648794372233",
-  appId: "1:648794372233:web:776b4733e4cb2cb5c56e58",
-  measurementId: "G-EVT2JTXL78"
+  apiKey: "AIzaSyCH4k-wwmAGCKpV3K7L3RnxiRQvOTjyZKY",
+  authDomain: "bspace-740d7.firebaseapp.com",
+  projectId: "bspace-740d7",
+  storageBucket: "bspace-740d7.firebasestorage.app",
+  messagingSenderId: "659259162192",
+  appId: "1:659259162192:web:f5a2113486573e6dcedb55",
+  measurementId: "G-9KQ19MNWRN"
 };
 
 // Khởi tạo Firebase
