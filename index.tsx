@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import firebase from 'firebase/compat/app';
-import { User } from 'firebase/auth';
 import { auth } from './firebase';
 import Auth from './Auth';
+import MySpace from './MySpace';
 import './index.css';
 
 const App: React.FC = () => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<firebase.User | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -36,15 +36,11 @@ const App: React.FC = () => {
         <main>
             <header>
                 <h1>Space Master</h1>
-                <p>Nền tảng lưu trữ đám mây cá nhân của bạn.</p>
+                {!user && <p>Nền tảng lưu trữ đám mây cá nhân của bạn.</p>}
             </header>
             
             {user ? (
-                <div className="content-area">
-                    <p className="welcome-message">Chào mừng, {user.email}!</p>
-                    {/* Các component cho trình duyệt file sẽ được thêm vào đây */}
-                    <button onClick={handleLogout} className="button">Đăng xuất</button>
-                </div>
+                <MySpace user={user} handleLogout={handleLogout} />
             ) : (
                 <Auth />
             )}

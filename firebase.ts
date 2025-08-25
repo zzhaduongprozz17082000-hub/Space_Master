@@ -1,11 +1,11 @@
 // Import các hàm cần thiết từ Firebase SDK
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
 // TODO: Thay thế đối tượng sau bằng cấu hình project Firebase của bạn
 // Bạn có thể lấy thông tin này từ Firebase Console:
 // Project settings > General > Your apps > SDK setup and configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBqVHi4MqllhOXUdLZxmqR_Wqu7pbPtY9g",
@@ -24,5 +24,5 @@ if (!firebase.apps.length) {
 
 
 // Khởi tạo và export các dịch vụ Firebase bạn muốn sử dụng
-// Ví dụ: Dịch vụ Authentication
 export const auth = firebase.auth();
+export const firestore = firebase.firestore();

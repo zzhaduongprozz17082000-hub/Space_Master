@@ -33,18 +33,19 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */ /* Allow content to start from top */
   padding: 2rem;
   text-align: center;
 }
 
 main {
-    max-width: 600px;
-    width: 100%;
+    width: 90%;
+    max-width: 1200px;
 }
 
 header {
     margin-bottom: 2rem;
+    width: 100%;
 }
 
 h1 {
@@ -160,7 +161,13 @@ p {
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -24px;
+    margin-left: -24px;
 }
+
 
 @keyframes rotation {
     0% {
@@ -169,4 +176,152 @@ p {
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* MySpace Styles */
+.myspace-container {
+    width: 100%;
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.myspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155; /* Slate 700 */
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-info p {
+    font-size: 1.1rem;
+    color: var(--text-primary-color);
+}
+
+.logout-btn {
+    background-color: var(--error-color);
+    padding: 0.5rem 1rem;
+}
+
+.logout-btn:hover {
+    background-color: #dc2626; /* Red 600 */
+}
+
+/* Breadcrumb Styles */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.breadcrumb-item, .breadcrumb-link {
+    font-size: 1.1rem;
+    color: var(--text-secondary-color);
+}
+
+.breadcrumb-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.breadcrumb-link:hover {
+    color: var(--text-primary-color);
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: var(--text-secondary-color);
+    font-size: 1.1rem;
+}
+
+.breadcrumb-item {
+    color: var(--text-primary-color);
+    font-weight: 600;
+}
+
+
+.file-browser {
+    min-height: 400px;
+    display: flex;
+    /* padding-top: 1rem; */ /* No longer needed as breadcrumb has margin-bottom */
+}
+
+.placeholder-text {
+    color: var(--text-secondary-color);
+    font-size: 1.2rem;
+    margin: auto; /* Center it */
+}
+
+/* MySpace loading spinner (smaller) */
+.loading-spinner-small {
+    width: 32px;
+    height: 32px;
+    border: 4px solid var(--surface-color);
+    border-bottom-color: var(--primary-color);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    margin: auto; /* Center it */
+}
+
+.grid-view {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.5rem;
+    align-content: start;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+    text-align: center;
+}
+
+.grid-item:hover {
+    background-color: #334155; /* Slate 700 */
+    transform: translateY(-4px);
+}
+
+.grid-item .item-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.75rem;
+}
+
+.folder-item .item-icon {
+    color: #f59e0b; /* Amber 500 */
+}
+
+.file-item .item-icon {
+    color: var(--text-secondary-color); /* Slate 400 */
+}
+
+.grid-item .item-name {
+    font-size: 0.9rem;
+    color: var(--text-primary-color);
+    word-break: break-word; /* Wrap long file names */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.25em; /* Reserve space for 2 lines */
 }
