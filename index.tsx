@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import firebase from 'firebase/compat/app';
-import { auth } from './firebase';
+import { auth, firestore } from './firebase';
 import Auth from './Auth';
 import MySpace from './MySpace';
 import './index.css';
@@ -11,7 +11,19 @@ const App: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+            if (currentUser) {
+                // Tạo hoặc cập nhật thông tin người dùng trong Firestore
+                try {
+                    const userRef = firestore.collection('users').doc(currentUser.uid);
+                    await userRef.set({
+                        email: currentUser.email,
+                        uid: currentUser.uid,
+                    }, { merge: true });
+                } catch (error) {
+                    console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+                }
+            }
             setUser(currentUser);
             setLoading(false);
         });

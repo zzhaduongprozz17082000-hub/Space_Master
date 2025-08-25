@@ -214,6 +214,7 @@ body {
     margin-bottom: 2rem;
 }
 
+.sidebar-nav li button,
 .sidebar-nav li a {
     display: flex;
     align-items: center;
@@ -224,12 +225,20 @@ body {
     color: var(--text-primary);
     font-weight: 600;
     transition: background-color 0.2s ease;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: var(--font-family);
 }
 
+.sidebar-nav li button:hover,
 .sidebar-nav li a:hover {
     background-color: var(--bg-card);
 }
 
+.sidebar-nav li button.active,
 .sidebar-nav li a.active {
     background-color: var(--primary-accent);
     color: var(--white);
@@ -348,6 +357,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 2rem;
+    min-height: 24px; /* Reserve space */
 }
 
 .breadcrumb-link, .breadcrumb-item {
@@ -410,6 +420,8 @@ body {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .grid-item:hover {
@@ -422,7 +434,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .item-icon {
@@ -435,7 +447,11 @@ body {
     color: var(--text-secondary);
 }
 
-.item-actions button {
+.item-actions-menu {
+    position: relative;
+}
+
+.item-actions-menu button {
     background: none;
     border: none;
     color: var(--text-secondary);
@@ -443,11 +459,41 @@ body {
     padding: 0.25rem;
     border-radius: 50%;
 }
-.item-actions button:hover {
+.item-actions-menu button:hover {
     color: var(--text-primary);
     background-color: rgba(139, 148, 158, 0.2);
 }
+.item-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 0;
+    z-index: 10;
+    min-width: 150px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+.item-dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    color: var(--text-primary);
+}
+.item-dropdown-menu button:hover {
+    background-color: var(--primary-accent);
+    color: var(--white);
+}
 
+
+.item-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
 .item-details .item-name {
     font-size: 1rem;
     font-weight: 600;
@@ -458,10 +504,122 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 2rem; /* Reserve space */
+    min-height: 48px; /* Reserve space for 2 lines */
     margin-bottom: 0.25rem;
 }
 .item-details .item-date {
     font-size: 0.8rem;
     color: var(--text-secondary);
+}
+
+/* Share Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h3 {
+    font-size: 1.25rem;
+}
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.share-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.share-form .input {
+    flex-grow: 1;
+}
+.share-form .permission-select {
+    background-color: var(--bg-darkest);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    padding: 0 0.5rem;
+}
+
+.shared-users-list h4 {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.shared-user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.shared-user-item:last-child {
+    border-bottom: none;
+}
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+.user-info .email {
+    font-weight: 600;
+}
+.user-info .role {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.user-actions .permission-select {
+    font-size: 0.9rem;
+}
+.user-actions .remove-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.user-actions .remove-btn:hover {
+    color: var(--error-color);
 }
