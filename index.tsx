@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import firebase from 'firebase/compat/app';
 import { auth, firestore } from './firebase';
-import Auth from './Auth';
-import MySpace from './MySpace';
+import Auth from './components/Auth';
+import MySpace from './pages/MySpace';
 import './index.css';
 
 const App: React.FC = () => {
@@ -13,7 +13,6 @@ const App: React.FC = () => {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
             if (currentUser) {
-                // Tạo hoặc cập nhật thông tin người dùng trong Firestore
                 try {
                     const userRef = firestore.collection('users').doc(currentUser.uid);
                     await userRef.set({
@@ -28,7 +27,6 @@ const App: React.FC = () => {
             setLoading(false);
         });
 
-        // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
 
