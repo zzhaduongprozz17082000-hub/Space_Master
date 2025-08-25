@@ -1,0 +1,5 @@
+{
+  "name": "Space Master",
+  "description": "Một ứng dụng lưu trữ và chia sẻ file được xây dựng bằng React, TypeScript và Firebase.",
+  "requestFramePermissions": []
+}
